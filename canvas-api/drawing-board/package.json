@@ -1,0 +1,12 @@
+{
+  "name": "drawing-board",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite"
+  },
+  "devDependencies": {
+    "vite": "^4.4.9"
+  }
+}

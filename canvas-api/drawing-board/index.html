@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        user-select: none;
+      }
+
+      .tool-bar {
+        position: absolute;
+        left: 50px;
+        top: 50px;
+      }
+
+      .eraser-circle {
+        display: none;
+        position: fixed;
+        border-radius: 50%;
+        border: 1px solid #000;
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- HTML5 新增的标签： 配合js canvas技术的画布标签 -->
+    <canvas id="canvas"></canvas>
+
+    <div class="tool-bar">
+      <p>
+        <span>颜色选择:</span>
+        <!-- // 事件: 选好 -> change  点击颜色 -> input  点击小方块 -> click -->
+        <input type="color" id="colorInput" />
+      </p>
+      <p>
+        <span>线条粗度:</span>
+        <input
+          type="range"
+          min="1"
+          max="30"
+          value="1"
+          step="1"
+          id="lineWidthRange"
+        />
+        <span id="lineWidthValue">1</span>
+      </p>
+      <p>
+        <span>清除画布:</span>
+        <button id="clearAllBtn">CLEAR BUTTON</button>
+      </p>
+      <p>
+        <span>橡皮擦:</span>
+        <button id="eraserBtn">ERASER</button>
+        <input
+          type="range"
+          min="5"
+          max="30"
+          value="5"
+          step="1"
+          id="eraserLineWidthRange"
+        />
+        <span id="eraserLineWidthValue">5</span>
+        <span id="eraserCircle" class="eraser-circle"></span>
+      </p>
+    </div>
+
+    <script type="module" src="./index.js"></script>
+  </body>
+</html>

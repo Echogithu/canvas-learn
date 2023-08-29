@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    html,
+    body {
+      margin: 0;
+    }
+
+    .canvas-container,
+    .canvas2-container {
+      display: none;
+      border: 1px solid #ddd;
+    }
+  </style>
+  <body>
+    <div>
+      <input type="file" id="imageFile" accept="image/*" />
+    </div>
+
+    <div class="canvas-container">
+      <canvas id="can"></canvas>
+    </div>
+
+    <div class="canvas2-container">
+      <canvas id="can2"></canvas>
+    </div>
+
+    <script>
+      const oContainer = document.querySelector(".canvas-container");
+      const oContainer2 = document.querySelector(".canvas2-container");
+      const oImageFile = document.querySelector("#imageFile");
+      const oCan = document.getElementById("can");
+      const oCan2 = document.getElementById("can2");
+      const ctx = oCan.getContext("2d");
+      const ctx2 = oCan2.getContext("2d");
+
+      const oImage = new Image();
+      let initPos = [];
+      let screenShotData = [];
+      const MASK_OPACITY = 0.5;
+
+      const init = () => {
+        this.bindEvent();
+      };
+
+      function bindEvent() {
+        oImageFile.addEventListener("change", handleFileChange, false);
+        oCan.addEventListener("mousedown", handleCanvasMouseDown, false);
+      }
+
+      function handleCanvasMouseDown(e) {
+        console.log(e);
+        initPos = [e.offsetX, e.offsetY];
+
+        oCan.addEventListener("mousemove", handleCanvasMouseMove, false);
+        oCan.addEventListener("mouseup", handleCanvasMouseUp, false);
+      }
+
+      // 5. 获取截图的矩形
+      function handleCanvasMouseMove(e) {
+        const endX = e.offsetX;
+        const endY = e.offsetY;
+        const [startX, startY] = initPos;
+        const rectWidth = endX - startX;
+        const rectHeight = endY - startY;
+        const { width, height } = oCan;
+
+        screenShotData = [startX, startY, rectWidth, rectHeight];
+
+        // 5.1 清除画布
+        ctx.clearRect(0, 0, width, height);
+        // 5.2 再画蒙层
+        drawImageMask(0, 0, width, height, MASK_OPACITY);
+        // 5.3 画截图部分
+        drawScreenShot(width, height, rectWidth, rectHeight);
+      }
+
+      function handleCanvasMouseUp() {
+        oCan.removeEventListener("mousemove", handleCanvasMouseMove, false);
+        oCan.removeEventListener("mouseup", handleCanvasMouseUp, false);
+        drawScreenShotImage(screenShotData);
+      }
+
+      // 1. 读取图片
+      function handleFileChange(e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        reader.readAsDataURL(file);
+        reader.onload = function (e) {
+          const data = e.target.result; // base64
+          oImage.src = data;
+
+          oImage.onload = function () {
+            const { width, height } = this;
+            // 2. 生成canvas
+            generateCanvas(oContainer, oCan, width, height);
+            // 3. 绘制图片
+            ctx.drawImage(oImage, 0, 0, width, height);
+            // 4. 画蒙层
+            drawImageMask(0, 0, width, height, MASK_OPACITY);
+          };
+        };
+      }
+
+      function generateCanvas(container, canvas, width, height) {
+        container.style.width = width + "px";
+        container.style.height = height + "px";
+        canvas.width = width;
+        canvas.height = height;
+        container.style.display = "block";
+      }
+
+      function drawImageMask(x, y, width, height, opacity) {
+        ctx.fillStyle = `rgba(0, 0, 0, ${opacity})`;
+        ctx.fillRect(x, y, width, height);
+      }
+
+      function drawScreenShot(canWidth, canHeight, rectWidth, rectHeight) {
+        // globalCompositeOperation 属性设置或返回如何将一个源（新的）图像绘制到目标（已有）的图像上。
+        // destination-out: 在源图像外显示目标图像。只有源图像外的目标图像部分会被显示，源图像是透明的。
+        ctx.globalCompositeOperation = "destination-out";
+        ctx.fillStyle = "#000";
+        ctx.fillRect(...initPos, rectWidth, rectHeight);
+
+        // destination-over: 在源图像上方显示目标图像。
+        ctx.globalCompositeOperation = "destination-over";
+
+        // 前四个图片从哪开始绘制，后四个因为画布与图片大小一样大
+        ctx.drawImage(
+          oImage,
+          0,
+          0,
+          canWidth,
+          canHeight,
+          0,
+          0,
+          canWidth,
+          canHeight
+        );
+      }
+
+      function drawScreenShotImage(screenShotData) {
+        const data = ctx.getImageData(...screenShotData);
+        generateCanvas(
+          oContainer2,
+          oCan2,
+          screenShotData[2],
+          screenShotData[3]
+        );
+        ctx2.clearRect(...screenShotData);
+        ctx2.putImageData(data, 0, 0);
+      }
+
+      init();
+    </script>
+  </body>
+</html>
