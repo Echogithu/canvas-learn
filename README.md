@@ -6,4 +6,7 @@ canvas 学习及案例
 /screen-shot
 
 ## 案例二：画板
- /canvas-api/drawing-board
+/canvas-api/drawing-board
+
+## 案例三：Canvas鼠标拖动创建矩形
+/canvas-api/rect

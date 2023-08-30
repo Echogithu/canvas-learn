@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="can"></canvas>
+
+    <script src="./rect.js"></script>
+    <script>
+      // // 1. 获取画布
+      // const oCan = document.getElementById("can");
+
+      // // 2. 获取绘制 2d 的渲染上下文
+      // const ctx = oCan.getContext("2d");
+
+      // // 保存客户端元素对象
+      // const documentElement = document.documentElement;
+      // // 3. 设置画布的宽高
+      // oCan.width = documentElement.clientWidth;
+      // oCan.height = documentElement.clientHeight;
+
+      // /**
+      //  * canvas 2d 坐标系： PX像素
+      //  * 左上角为原点，向右为X轴，向下为Y轴
+      //  */
+
+      // /**
+      //  * stroke => 描边（画线 空心）
+      //  * fill => 填充（实心）
+      //  */
+
+      // // 描边和填充颜色
+      // ctx.strokeStyle = "red";
+      // ctx.fillStyle = "orange";
+
+      // /**
+      //  *  绘制矩形
+      //  *  默认颜色： #000
+      //  *  参数列表：
+      //  *  1. 横坐标: x
+      //  *  2. 纵坐标: y
+      //  *  3. 矩形宽度: width
+      //  *  4. 矩形高度: height
+      //  */
+
+      // // 绘制描边矩形 rect
+      // ctx.strokeRect(100, 100, 150, 150);
+
+      // // 绘制填充矩形 rect
+      // ctx.fillRect(400, 400, 150, 300);
+
+      // 清除画布内容
+      // 通过把像素点的颜色设置为透明来达到清除一个矩形区域的内容的目的
+      // 清除一个特定矩形范围内的内容
+      // ctx.clearRect(0, 0, oCan.width, oCan.height);
+      // 如果只是清除某个圆，范围：保存原来的， 清除后再绘制
+
+      /**
+       * CanvasRenderingContext2D.strokeRect()
+       * CanvasRenderingContext2D.fillRect()
+       * CanvasRenderingContext2D.clearRect()
+       */
+       
+    </script>
+  </body>
+</html>
