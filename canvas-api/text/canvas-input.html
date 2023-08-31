@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="can"></canvas>
+    <script>
+      const oCan = document.getElementById("can");
+      const ctx = oCan.getContext("2d");
+
+      const documentElement = document.documentElement;
+      oCan.width = documentElement.clientWidth;
+      oCan.height = documentElement.clientHeight;
+
+      ctx.font = "30px serif";
+      ctx.textBaseline = "top";
+
+      const textArr = [
+        // ['a,'b', ...] 第一行
+        // ['a,'b', ...] 第二行
+      ];
+
+      const widthArr = [
+        // 240
+        // 260
+      ];
+
+      let index = 0;
+      let lineHeight = 30;
+
+      const init = () => {
+        // 1. 绘制输入框矩形
+        drawInputBox(200, 100, 300, 50);
+        // 2. 绑定按键
+        bindEvent();
+      };
+
+      function bindEvent() {
+        documentElement.addEventListener("keydown", handleKeyDown, false);
+      }
+
+      function handleKeyDown(e) {
+        // 大小写
+        const capslock = e.getModifierState("CapsLock");
+
+        const key = capslock ? e.key.toUpperCase() : e.key.toLowerCase();
+
+        if (key === "capslock" || key === "CAPSLOCK") return;
+
+        if (e.shiftKey && String.fromCharCode(e.keyCode)) {
+          if (key === "shift") return;
+          addChar(key.toUpperCase());
+          return;
+        }
+
+        switch (key.toLowerCase()) {
+          case "alt":
+          case "meta":
+            return;
+          case "backspace":
+            removeChar();
+            break;
+          case "enter":
+            index++;
+            break;
+          default:
+            addChar(key);
+        }
+      }
+
+      function drawInputBox(x, y, w, h) {
+        ctx.strokeRect(x, y, w, h);
+      }
+
+      function drawText() {
+        ctx.clearRect(0, 0, oCan.width, oCan.height);
+        ctx.strokeRect(200, 100, 300, 50 + index * lineHeight);
+
+        textArr.forEach((charArr, index) => {
+          ctx.fillText(charArr.join(""), 210, 110 + index * lineHeight);
+        });
+      }
+
+      function addChar(key) {
+        const keyWidth = ctx.measureText(key).width;
+
+        if (textArr[index]) {
+          textArr[index].push(key);
+          widthArr[index] += keyWidth;
+        } else {
+          textArr[index] = [key];
+          widthArr[index] = keyWidth;
+        }
+
+        if (widthArr[index] >= 270) {
+          index++;
+        }
+
+        drawText();
+      }
+
+      function removeChar() {
+        if (textArr.length) {
+          const charArr = textArr[textArr.length - 1]; // 找到最后一行
+          console.log("charArr: ", charArr);
+
+          if (!charArr.length) {
+            textArr.pop();
+            widthArr.pop();
+            index--;
+            return;
+          }
+
+          const lastChar = charArr.pop(); // 最后一项
+          const charWidth = ctx.measureText(lastChar).width;
+          widthArr[index] -= charWidth;
+          drawText();
+        }
+      }
+
+      init();
+    </script>
+  </body>
+</html>

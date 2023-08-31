@@ -10,3 +10,6 @@ canvas 学习及案例
 
 ## 案例三：Canvas鼠标拖动创建矩形
 /canvas-api/rect
+
+## 案例四：Canvas文本输入处理实现
+/canvas-api/text

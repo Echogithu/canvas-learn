@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="can"></canvas>
+    <script>
+      const oCan = document.getElementById("can");
+      const ctx = oCan.getContext("2d");
+
+      const documentElement = document.documentElement;
+      oCan.width = documentElement.clientWidth;
+      oCan.height = documentElement.clientHeight;
+
+      /**
+       * fillText() 填充文本
+       * strokeText() 描边文本
+       */
+
+      /**
+       * 参数：
+       * 1. 文本
+       * 2. 横坐标
+       * 3. 纵坐标
+       * 4. 文本最大宽度 可选
+       */
+
+      /**
+       * font 设置文本样式、尺寸、字体 （按照顺序，同步设置）
+       * 参数：
+       * 1. 样式 可选
+       * 2. 尺寸 可选
+       * 3. 字体 可选
+       *
+       * 默认值： 10px sans-serif
+       */
+
+      ctx.font = "50px serif";
+      // // ctx.fillText("测试", 300, 300);
+      ctx.strokeStyle = "red";
+      // ctx.strokeText("测试", 300, 300);
+
+      // 横坐标
+      ctx.moveTo(500, 100);
+      ctx.lineTo(1000, 100);
+      // 纵坐标
+      ctx.moveTo(500, 100);
+      ctx.lineTo(500, 600);
+      ctx.stroke();
+
+      // textAlign 将文本对齐到Y轴的左侧或者右侧
+      // left/start 等效
+      // right/end 等效
+      // ctx.textAlign = "left";
+      // ctx.fillText("left", 500, 100);
+      // ctx.textAlign = "right";
+      // ctx.fillText("right", 500, 150);
+      // ctx.textAlign = "start";
+      // ctx.fillText("start", 500, 200);
+      // ctx.textAlign = "end";
+      // ctx.fillText("end", 500, 250);
+
+      // textBaseLine: 文本基线
+      // top: 文本顶部对齐X轴
+      // hanging: 文本顶部对齐X轴
+      // middle: 文本贯穿X轴
+      // alphabetic: 以英文字母为基准的对齐，特征是文本底部对齐X轴
+      // idiographic: 以表意文字为基准的对齐，特征是文本底部对齐X轴
+      // bottom: 
+      ctx.textBaseline = "Top";
+      ctx.fillText("Top", 500, 100);
+      // ctx.fillText("hanging", 500, 100);
+      // ctx.fillText("alphabetic", 500, 100);
+      // ctx.fillText("idiographic", 500, 100);
+      // ctx.fillText("bottom", 500, 100);
+
+      // direction 兼容性差
+
+      // measureText(text) => 测量文本的尺寸位置的信息对象
+      ctx.fillText('I', 500, 100);
+      const info = ctx.measureText('I');
+      console.log(info.width);
+    </script>
+  </body>
+</html>
