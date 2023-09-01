@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <style>
+      .canvas-container {
+        margin: 50px auto;
+        box-shadow: 1px 3px 5px #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="canvas-container">
+      <canvas id="chartCanvas"></canvas>
+    </div>
+
+    <script>
+      const data = {
+        axis1: {
+          name: "降水量",
+          unit: "ml",
+          data: [
+            6, 32, 70, 86, 68.7, 100.7, 125.6, 112.2, 78.7, 48.8, 36.0, 19.3,
+          ],
+          max: 250,
+        },
+        axis2: {
+          name: "温度",
+          unit: "°C",
+          data: [
+            6.0, 10.2, 10.3, 11.5, 10.3, 13.2, 14.3, 16.4, 18.0, 16.5, 12.0,
+            5.2,
+          ],
+          max: 25,
+        },
+        bottom: [
+          "1月",
+          "2月",
+          "3月",
+          "4月",
+          "5月",
+          "6月",
+          "7月",
+          "8月",
+          "9月",
+          "10月",
+          "11月",
+          "12月",
+        ],
+      };
+
+      const oContainer = document.querySelector(".canvas-container");
+      const oCan = document.getElementById("chartCanvas");
+      const ctx = oCan.getContext("2d");
+
+      const canPaddingX = 80;
+      const canPaddingY = 70;
+      const axisXGap = 40; // 横线GAP
+      const bottomTextGap = 60;
+      const lineCount = 6;
+      const totalHeight = (lineCount - 1) * axisXGap;
+      const axisWidth = axisXGap * 2 + (data.bottom.length - 1) * bottomTextGap;
+      const canWidth = canPaddingX * 2 + axisWidth;
+      const canHeight = canPaddingY * 2 + totalHeight;
+
+      let xGap = canPaddingY;
+      let leftNumber = data.axis2.max;
+      let rightNumber = data.axis1.max;
+      let textGap = bottomTextGap;
+
+      const init = () => {
+        adaptDpr(oCan, canWidth, canHeight);
+        setDefaultStyle();
+        drawAxisField();
+        drawAxisLines();
+      };
+
+      function setDefaultStyle() {
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.font = "14px Arial";
+      }
+
+      function drawAxisField() {
+        const textPosY = xGap - 30;
+        ctx.fillStyle = "#666";
+        ctx.fillText(data.axis2.name, canPaddingX - 30, textPosY);
+        ctx.fillText(data.axis1.name, canPaddingX + axisWidth - 10, textPosY);
+      }
+
+      function drawAxisLines() {
+        for (let i = 0; i < lineCount; i++) {
+          let isFinalLine = i === lineCount - 1;
+          drawAxisLine(isFinalLine);
+
+          if (isFinalLine) {
+            for (let i = 0; i < data.bottom.length; i++) {
+              drawBottomText(i);
+            }
+          }
+        }
+      }
+
+      function drawAxisLine(isFinalLine) {
+        const leftText = leftNumber + " " + data.axis2.unit;
+        const rightText = rightNumber + " " + data.axis1.unit;
+
+        if (isFinalLine) {
+          ctx.strokeStyle = "#333";
+          ctx.setLineDash([]);
+        } else {
+          ctx.strokeStyle = "#999";
+          ctx.setLineDash([5, 5]);
+        }
+
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "#666";
+
+        ctx.beginPath();
+        ctx.moveTo(canPaddingX, xGap);
+        ctx.lineTo(canPaddingX + axisWidth, xGap);
+
+        ctx.textAlign = "end";
+        ctx.fillText(leftText, canPaddingX - 10, xGap);
+        ctx.textAlign = "start";
+        ctx.fillText(rightText, axisWidth + canPaddingX + 10, xGap);
+
+        ctx.stroke();
+
+        leftNumber -= 5;
+        rightNumber -= 50;
+        xGap += axisXGap;
+      }
+
+      function drawBottomText(index) {
+        const text = data.bottom[index];
+        const startX = canPaddingX + axisXGap + index * textGap;
+        const textWidth = ctx.measureText(text).width;
+
+        ctx.beginPath();
+        ctx.moveTo(startX, xGap - axisXGap);
+        ctx.lineTo(startX, xGap - axisXGap + 5);
+        ctx.fillText(text, startX - textWidth / 2, xGap - axisXGap + 20);
+        ctx.stroke();
+      }
+
+      function adaptDpr(canvas, width, height) {
+        const dpr = window.devicePixelRatio;
+
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+
+        oContainer.style.width = width + "px";
+        oContainer.style.height = height + "px";
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+        ctx.scale(dpr, dpr);
+      }
+
+      init();
+    </script>
+  </body>
+</html>
