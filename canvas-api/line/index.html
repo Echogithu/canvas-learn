@@ -7,13 +7,33 @@
 
     <style>
       .canvas-container {
+        position: relative;
         margin: 50px auto;
         box-shadow: 1px 3px 5px #ccc;
+      }
+      .canvas-container .round {
+        opacity: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        display: block;
+        width: 6px;
+        height: 6px;
+        background-color: #85c35e;
+        border-radius: 50%;
+        box-shadow: 0 0 3px #85c35e;
+        transition: transform 0.3;
+      }
+      .canvas-container .round.show {
+        opacity: 1;
+        transform: scale(1.5);
       }
     </style>
   </head>
   <body>
     <div class="canvas-container">
+      <i class="round"></i>
       <canvas id="chartCanvas"></canvas>
     </div>
 
@@ -53,6 +73,7 @@
       };
 
       const oContainer = document.querySelector(".canvas-container");
+      const oRound = document.querySelector(".round");
       const oCan = document.getElementById("chartCanvas");
       const ctx = oCan.getContext("2d");
 
@@ -71,12 +92,37 @@
       let rightNumber = data.axis1.max;
       let textGap = bottomTextGap;
 
+      const roundData = [];
+
       const init = () => {
         adaptDpr(oCan, canWidth, canHeight);
+        bindEvent();
         setDefaultStyle();
         drawAxisField();
         drawAxisLines();
+        drawRounds();
+        drawRoundLines();
+        drawRects();
       };
+
+      function bindEvent() {
+        oCan.addEventListener("mousemove", handleCanvasMouseMove, false);
+      }
+
+      function handleCanvasMouseMove(e) {
+        const x = e.clientX;
+        const y = e.clientY;
+
+        const roundPos = checkInPath(x, y);
+
+        if (roundPos.length) {
+          oRound.style.left = roundPos[0] - 3 + "px";
+          oRound.style.top = roundPos[1] - 3 + "px";
+          oRound.classList.add("show");
+        } else {
+          oRound.classList.remove("show");
+        }
+      }
 
       function setDefaultStyle() {
         ctx.lineCap = "round";
@@ -135,6 +181,54 @@
         xGap += axisXGap;
       }
 
+      function drawRounds() {
+        for (let i = 0; i < data.axis2.data.length; i++) {
+          drawRound(i);
+        }
+      }
+
+      function drawRoundLines() {
+        for (let i = 0; i < roundData.length - 1; i++) {
+          drawRoundLine(i);
+        }
+      }
+
+      function drawRects() {
+        for (let i = 0; i < data.axis1.data.length; i++) {
+          drawRect(i);
+        }
+      }
+
+      function drawRound(index) {
+        const [x, y] = cToPx(index);
+
+        roundData.push([x, y]);
+
+        ctx.fillStyle = " #85c35e";
+        ctx.beginPath();
+        ctx.arc(x, y, 3, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+
+      function drawRoundLine(index) {
+        const [x1, y1] = roundData[index];
+        const [x2, y2] = roundData[index + 1];
+        ctx.strokeStyle = "#85c35e";
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+      }
+
+      function drawRect(index) {
+        const [x, y] = mlToPx(index);
+        ctx.fillStyle = "#5a6fc0";
+
+        ctx.beginPath();
+        ctx.fillRect(x - 20, y, 40, totalHeight + canPaddingY - y);
+      }
+
       function drawBottomText(index) {
         const text = data.bottom[index];
         const startX = canPaddingX + axisXGap + index * textGap;
@@ -159,6 +253,53 @@
         canvas.style.height = height + "px";
         ctx.scale(dpr, dpr);
       }
+
+      function cToPx(index) {
+        const x = canPaddingX + axisXGap + index * bottomTextGap;
+        const y =
+          totalHeight -
+          (totalHeight * data.axis2.data[index]) / data.axis2.max +
+          canPaddingY;
+
+        return [x, y];
+      }
+
+      function mlToPx(index) {
+        const x = canPaddingX + axisXGap + index * bottomTextGap;
+        const y =
+          totalHeight -
+          (totalHeight * data.axis1.data[index]) / data.axis1.max +
+          canPaddingY;
+
+        return [x, y];
+      }
+
+      function checkInPath(x, y) {
+        for (let i = 0; i < roundData.length; i++) {
+          const [rx, ry] = roundData[i];
+          const _x = rx + oContainer.offsetLeft;
+          const _y = ry + oContainer.offsetTop;
+
+          if (x >= _x - 3 && x <= _x + 3 && y <= _y + 3 && y >= _y - 3) {
+            return [rx, ry];
+          }
+        }
+
+        return [];
+      }
+
+      /**
+       * totalHeight / max = x / data
+       * totalHeight - totalHeight * data / max + canPaddingX
+       *
+       */
+
+      /**
+       * 鼠标移到点，点放大
+       * 1. 整体重绘
+       * 2. 脏检查：只绘制某个点，麻烦
+       * 3. 用一个div,鼠标移至某个点，修改div位置
+       */
 
       init();
     </script>
