@@ -13,3 +13,6 @@ canvas 学习及案例
 
 ## 案例四：Canvas文本输入处理实现
 /canvas-api/text
+
+## 案例五：Canvas实现线性柱状图
+/canvas-api/line
