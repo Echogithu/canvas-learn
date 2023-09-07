@@ -79,7 +79,7 @@
 
       const canPaddingX = 80;
       const canPaddingY = 70;
-      const axisXGap = 40; // 横线GAP
+      const axisXGap = 40; // 横线之间的GAP
       const bottomTextGap = 60;
       const lineCount = 6;
       const totalHeight = (lineCount - 1) * axisXGap;
@@ -242,6 +242,7 @@
       }
 
       function adaptDpr(canvas, width, height) {
+        // 像素大小的比率, 在 <canvas> 中更正分辨率, 从而获得更清晰的图像
         const dpr = window.devicePixelRatio;
 
         canvas.width = Math.floor(width * dpr);
